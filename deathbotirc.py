@@ -22,19 +22,19 @@ from wordwar import WordWarManager
 
 deatharray = []
 promptarray = []
-def load_death_array():
+def load_death_and_prompt_arrays():
 
-    for item in deatharray:
-        deatharray.remove(item)
+    # for item in deatharray:
+    #     deatharray.remove(item)
 
-    f = open("deathlist.txt","r")
-    print str(datetime.today()) + " | " + "Reloading Death Array"
+    # f = open("deathlist.txt","r")
+    # print str(datetime.today()) + " | " + "Reloading Death Array"
 
-    for line in f.readlines():
-        deatharray.append(line)
-        print str(datetime.today()) + " | " + "adding "+line
+    # for line in f.readlines():
+    #     deatharray.append(line)
+    #     print str(datetime.today()) + " | " + "adding "+line
 
-    f.close()
+    # f.close()
 
     for item in promptarray:
         promptarray.remove(item)
@@ -135,7 +135,7 @@ class WordWarBot(irc.IRCClient):
         elif msg.find("!help")!=-1:
                 self.print_usage(user)
         elif msg.startswith("!reloaddeath"):
-                load_death_array()              
+                load_death_and_prompt_arrays()              
         elif msg.startswith("!rejoinroom"):
                 self.signedOn()         
         elif msg.startswith("!leaveroom"):
@@ -268,6 +268,6 @@ if __name__ == "__main__":
 
     chan = args.channel
     nick = args.nick
-    # load_death_array()
+    load_death_and_prompt_arrays()
     reactor.connectTCP('irc.mibbit.com', 6667, WordWarBotFactory('#' + chan, nick))
     reactor.run()
