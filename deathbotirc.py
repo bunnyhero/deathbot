@@ -6,6 +6,8 @@
 #
 # see the accompanying LICENSE file
 
+import argparse
+
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 from random import *
@@ -259,7 +261,13 @@ class WordWarBotFactory(protocol.ClientFactory):
 
 
 if __name__ == "__main__":
-    chan = sys.argv[1]
-    load_death_array()
-    reactor.connectTCP('irc.mibbit.com', 6667, WordWarBotFactory('#' + chan, 'deathbot'))
+    parser = argparse.ArgumentParser(description='word war bot')
+    parser.add_argument('channel', help='channel to join (without the #)')
+    parser.add_argument('nick', help='nick for the bot')
+    args = parser.parse_args()
+
+    chan = args.channel
+    nick = args.nick
+    # load_death_array()
+    reactor.connectTCP('irc.mibbit.com', 6667, WordWarBotFactory('#' + chan, nick))
     reactor.run()
