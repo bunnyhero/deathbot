@@ -115,8 +115,8 @@ class WordWarBot(irc.IRCClient):
     def privmsg(self, user, channel, msg):
         father = self.check_for_daddy(user)
         lowmsg = msg.lower()
-        if lowmsg.find("unicorn")!= -1:
-                self.irc_send_say("You should go play http://games.adultswim.com/robot-unicorn-attack-twitchy-online-game.html")
+        # if lowmsg.find("unicorn")!= -1:
+        #         self.irc_send_say("You should go play http://games.adultswim.com/robot-unicorn-attack-twitchy-online-game.html")
         if msg.find("!startwar")!= -1:
                 self.parse_startwar(msg, user)
         elif msg.find("!throwdown") != -1:
@@ -149,11 +149,11 @@ class WordWarBot(irc.IRCClient):
             if (self.check_for_daddy(user) == 1):
                 self.irc_send_say("Yes, father.");
             irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
-        elif (lowmsg.find(' kill ') != -1) or (lowmsg.find(' die ') != -1):
-		    death = getRandomDeath()
-		    if (self.check_for_daddy(user) == 1):
-			    self.irc_send_say("Yes, father.");
-		    irc.IRCClient.say(self, channel, string.strip(user.split("!")[0] + " " + death % self.victim_display))
+      #   elif (lowmsg.find(' kill ') != -1) or (lowmsg.find(' die ') != -1):
+		    # death = getRandomDeath()
+		    # if (self.check_for_daddy(user) == 1):
+			   #  self.irc_send_say("Yes, father.");
+		    # irc.IRCClient.say(self, channel, string.strip(user.split("!")[0] + " " + death % self.victim_display))
 
 
     def parse_throwdown(self, command, user):
