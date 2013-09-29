@@ -55,7 +55,7 @@ class WordWarManager:
 
 
     def irc_send_msg(self, user, message):
-        self.irc.irc_send_msg( user.split("!")[0], message)
+        self.irc.irc_send_msg(user.split("!")[0], message)
 
                     
 
@@ -73,9 +73,9 @@ class WordWar():
         self.war_start_timer = Timer(self.start*60, self.start_word_war, [self])
         self.war_start_timer.start()
         self.timestarted=""
-        if (int(self.start) >2 ):
-                self.war_warning_timer = Timer((self.start-2) * 60, self.warning_word_war, [self])
-                self.war_warning_timer.start()
+        if (int(self.start) > 2):
+            self.war_warning_timer = Timer((self.start-2) * 60, self.warning_word_war, [self])
+            self.war_warning_timer.start()
         self.status = 0         
         
     def warning_word_war(self, args):
@@ -111,7 +111,7 @@ class WordWar():
             self.wwqueue.irc_send_msg(user, "status: underway")
             self.wwqueue.irc_send_msg(user, "started at:" + str(self.timestarted))
         
-        self.wwqueue.irc_send_msg(user, "number of members "+ str(len(self.nicklist)))
+        self.wwqueue.irc_send_msg(user, "number of members " + str(len(self.nicklist)))
         self.wwqueue.irc_send_msg(user, "-----")
         
         
@@ -119,7 +119,7 @@ class WordWar():
         #remove from queue
         print str(datetime.today()) + " | " + "finish word war"
         print str(datetime.today()) + " | " + "remove from queue"
-        self.send_message("WW: " +self.name + " is done - send your results")
+        self.send_message("WW: " + self.name + " is done - send your results")
         self.notify_nics()
         
         self.wwqueue.done_word_war(self)
