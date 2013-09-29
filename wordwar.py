@@ -16,8 +16,8 @@ class WordWarManager:
 
     def check_existing_war(self, user):
         for war in self.ww_queue:
-                if (war.name == user):
-                        return True
+            if (war.name == user):
+                return True
         return False
 
 
