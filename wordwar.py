@@ -40,11 +40,12 @@ class WordWarManager:
 #        if (self.check_for_daddy(user) == 1):
 #                self.irc_send_say("Yes father.");
         if len(self.ww_queue) == 0:
-                self.irc.irc_send_msg(user,"There are no active word wars")
-                return
+            self.irc.irc_send_msg(user,"There are no active word wars")
+            return
                 
         for ww in self.ww_queue:
-                ww.status_word_war(user)
+            ww.status_word_war(user)
+
     def irc_send_me(self, message):
         self.irc.irc_send_me( message)
 
@@ -129,13 +130,13 @@ class WordWar():
     def notify_nics(self):
         second_message = "Hey! That means you: "
         for nick in self.nicklist:
-                shortnick = nick.split("!")
-                second_message = second_message + shortnick[0] + " "
+            shortnick = nick.split("!")
+            second_message = second_message + shortnick[0] + " "
         self.wwqueue.irc_send_say(second_message)
 
         
     def send_message(self, message):        
         self.wwqueue.irc_send_say(message)
         for nick in self.nicklist:
-                self.wwqueue.irc_send_msg(nick, message)
+            self.wwqueue.irc_send_msg(nick, message)
 
