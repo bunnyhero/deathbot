@@ -119,20 +119,20 @@ class WordWarBot(irc.IRCClient):
         lowmsg = msg.lower()
         # if lowmsg.find("unicorn")!= -1:
         #         self.irc_send_say("You should go play http://games.adultswim.com/robot-unicorn-attack-twitchy-online-game.html")
-        if msg.find("!startwar")!= -1:
+        if msg.find("!startwar") != -1:
             self.parse_startwar(msg, user)
         elif msg.find("!throwdown") != -1:
             self.parse_throwdown(msg, user)
-        elif msg.find("!echo")!= -1:
+        elif msg.find("!echo") != -1:
             if (father==1):
                 self.parse_echo(msg,user)
-        elif msg.find("!status")!=-1:
+        elif msg.find("!status") != -1:
             self.wwMgr.get_status(user)
-        elif lowmsg.find("!time")!=-1:
-            self.irc_send_msg(channel, "thinks the time is "+ str(datetime.today()))
-        elif lowmsg.find("!joinwar")!=-1:
+        elif lowmsg.find("!time") != -1:
+            self.irc_send_msg(channel, "thinks the time is " + str(datetime.today()))
+        elif lowmsg.find("!joinwar") != -1:
             self.parse_join_wordwar(msg,user)
-        elif msg.find("!help")!=-1:
+        elif msg.find("!help") != -1:
             self.print_usage(user)
         elif msg.startswith("!reloaddeath"):
             load_death_and_prompt_arrays()              
@@ -141,12 +141,12 @@ class WordWarBot(irc.IRCClient):
         elif msg.startswith("!leaveroom"):
             if (father==1):
                 self.part_room()            
-        elif msg.find("!changevictim")!=-1:
+        elif msg.find("!changevictim") != -1:
             self.parse_changevictim(msg,user) 
         elif msg.find("!victim")!=-1:
             if (father == 1):
                 self.irc_send_msg(user,"The victim is currently: " + self.victim )
-        elif msg.find("!prompt")!=-1:
+        elif msg.find("!prompt") != -1:
             prompt = getRandomPrompt()
             if (self.check_for_daddy(user) == 1):
                 self.irc_send_say("Yes, father.");
@@ -186,8 +186,8 @@ class WordWarBot(irc.IRCClient):
 
         commandlist = [c for c in command.split(" ") if c != '']
         if (len(commandlist) < 3):
-                self.irc_send_msg(user, "Start war usage: !startwar # ## -> create a war for # minutes starting in ## minutes")
-                return
+            self.irc_send_msg(user, "Start war usage: !startwar # ## -> create a war for # minutes starting in ## minutes")
+            return
         war = self.initiate_war(short_user, commandlist)
         if war != None:
             self.wwMgr.insert_into_war(war.name, user)
@@ -195,23 +195,23 @@ class WordWarBot(irc.IRCClient):
 
     def initiate_war(self, user, commandlist):
         war = self.wwMgr.create_word_war(user, commandlist[1], commandlist[2],getRandomPrompt())
-        print str(datetime.today()) + " | " + "Create word war "+user + " length "  + commandlist[1] + " starting in " + commandlist[2]
+        print str(datetime.today()) + " | " + "Create word war " + user + " length "  + commandlist[1] + " starting in " + commandlist[2]
         if (self.check_for_daddy(user) == 1):
-                self.irc_send_say("Yes father.");
+            self.irc_send_say("Yes father.");
         self.irc_send_say("The gauntlet has been thrown... "
                                           + user + " called a word war of " 
                                           + commandlist[1] + " min starting in "
-                                          + commandlist[2] + " minutes." )
+                                          + commandlist[2] + " minutes.")
         return war
 
     def parse_join_wordwar(self, command, user):
         if (self.check_for_daddy(user) == 1):
-                self.irc_send_say("Yes father.");
+            self.irc_send_say("Yes father.");
         print command
         commandlist = [c for c in command.split(" ") if c != '']
         username = commandlist[1].lower()
-        if len(commandlist) <2:
-                return
+        if len(commandlist) < 2:
+            return
 
         war = username
         if (self.wwMgr.insert_into_war(war,user) == True):

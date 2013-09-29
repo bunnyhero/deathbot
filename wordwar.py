@@ -47,11 +47,11 @@ class WordWarManager:
             ww.status_word_war(user)
 
     def irc_send_me(self, message):
-        self.irc.irc_send_me( message)
+        self.irc.irc_send_me(message)
 
     
     def irc_send_say(self, message):
-        self.irc.irc_send_say( message)
+        self.irc.irc_send_say(message)
 
 
     def irc_send_msg(self, user, message):
@@ -70,17 +70,17 @@ class WordWar():
         self.start = int(start)
         self.timecalled = datetime.today()
         self.wwqueue = queue
-        self.war_start_timer = Timer( self.start*60, self.start_word_war, [self] )
+        self.war_start_timer = Timer(self.start*60, self.start_word_war, [self])
         self.war_start_timer.start()
         self.timestarted=""
         if (int(self.start) >2 ):
-                self.war_warning_timer = Timer( (self.start-2)*60, self.warning_word_war, [self] )
+                self.war_warning_timer = Timer((self.start-2) * 60, self.warning_word_war, [self])
                 self.war_warning_timer.start()
         self.status = 0         
         
     def warning_word_war(self, args):
-        self.send_message("WW: " +self.name + " starts in 2 minutes for "+str(self.length))
-        self.send_message("Optional Prompt for this WW is: %s" % self.prompt )
+        self.send_message("WW: " + self.name + " starts in 2 minutes for " + str(self.length))
+        self.send_message("Optional Prompt for this WW is: %s" % self.prompt)
         self.notify_nics()
 
         
@@ -88,20 +88,20 @@ class WordWar():
         # send out message
         self.status = 1
         self.send_message("GOOOOOOOOOOO!!! WW: " +self.name + " for " + str(self.length) + " minutes")
-        self.send_message("Optional Prompt for this WW is: %s" % self.prompt )
+        self.send_message("Optional Prompt for this WW is: %s" % self.prompt)
         self.notify_nics()
         self.timestarted = datetime.today()
-        self.war_timer = Timer( float(self.length)*60.0, self.finish_word_war, [self])
+        self.war_timer = Timer(float(self.length) * 60.0, self.finish_word_war, [self])
         self.war_timer.start()
         
         
     def status_word_war(self, user):
-        self.wwqueue.irc_send_msg(user, "name: "+self.name )
-        self.wwqueue.irc_send_msg(user, "length: "+str(self.length))
-        self.wwqueue.irc_send_msg(user, "start: "+str(self.start) )
+        self.wwqueue.irc_send_msg(user, "name: " + self.name )
+        self.wwqueue.irc_send_msg(user, "length: " + str(self.length))
+        self.wwqueue.irc_send_msg(user, "start: " + str(self.start) )
         if (self.status == 0):
             self.wwqueue.irc_send_msg(user, "status: waiting")
-            self.wwqueue.irc_send_msg(user, "called at:" +str(self.timecalled))
+            self.wwqueue.irc_send_msg(user, "called at:" + str(self.timecalled))
             interval = timedelta(minutes=self.start) 
             then = self.timecalled + interval
             timeleft = then - datetime.today() 
@@ -109,9 +109,9 @@ class WordWar():
 
         else:
             self.wwqueue.irc_send_msg(user, "status: underway")
-            self.wwqueue.irc_send_msg(user, "started at:" +str(self.timestarted))
+            self.wwqueue.irc_send_msg(user, "started at:" + str(self.timestarted))
         
-        self.wwqueue.irc_send_msg(user, "number members "+str(len(self.nicklist)))
+        self.wwqueue.irc_send_msg(user, "number of members "+ str(len(self.nicklist)))
         self.wwqueue.irc_send_msg(user, "-----")
         
         
