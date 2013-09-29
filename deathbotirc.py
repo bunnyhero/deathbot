@@ -120,27 +120,27 @@ class WordWarBot(irc.IRCClient):
         # if lowmsg.find("unicorn")!= -1:
         #         self.irc_send_say("You should go play http://games.adultswim.com/robot-unicorn-attack-twitchy-online-game.html")
         if msg.find("!startwar")!= -1:
-                self.parse_startwar(msg, user)
+            self.parse_startwar(msg, user)
         elif msg.find("!throwdown") != -1:
-                self.parse_throwdown(msg, user)
+            self.parse_throwdown(msg, user)
         elif msg.find("!echo")!= -1:
             if (father==1):
                 self.parse_echo(msg,user)
         elif msg.find("!status")!=-1:
-                self.wwMgr.get_status(user)
+            self.wwMgr.get_status(user)
         elif lowmsg.find("!time")!=-1:
-                self.irc_send_msg(channel, "thinks the time is "+ str(datetime.today()))
+            self.irc_send_msg(channel, "thinks the time is "+ str(datetime.today()))
         elif lowmsg.find("!joinwar")!=-1:
-                self.parse_join_wordwar(msg,user)
+            self.parse_join_wordwar(msg,user)
         elif msg.find("!help")!=-1:
-                self.print_usage(user)
+            self.print_usage(user)
         elif msg.startswith("!reloaddeath"):
-                load_death_and_prompt_arrays()              
+            load_death_and_prompt_arrays()              
         elif msg.startswith("!rejoinroom"):
-                self.signedOn()         
+            self.signedOn()         
         elif msg.startswith("!leaveroom"):
             if (father==1):
-                    self.part_room()            
+                self.part_room()            
         elif msg.find("!changevictim")!=-1:
             self.parse_changevictim(msg,user) 
         elif msg.find("!victim")!=-1:
