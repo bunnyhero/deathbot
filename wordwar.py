@@ -7,7 +7,7 @@ from twisted.internet import reactor
 from datetime import *
 from threading import Timer
 import string
-
+import botutils
 
 class WordWarManager:
     ww_queue = []
@@ -74,7 +74,7 @@ class WordWar():
         self.status = 0
 
     def warning_word_war(self, args):
-        self.send_message("WW: " + self.name + " starts in 2 minutes for " + str(self.length))
+        self.send_message("WW: " + self.name + " starts in 2 minutes for " + botutils.minutes_string(self.length))
         self.send_message("Optional Prompt for this WW is: %s" % self.prompt)
         self.notify_nics()
 
@@ -82,7 +82,7 @@ class WordWar():
         # send out message
         self.status = 1
         self.send_message(
-            "GOOOOOOOOOOO!!! WW: " + self.name + " for " + str(self.length) + " minutes")
+            "GOOOOOOOOOOO!!! WW: " + self.name + " for " + botutils.minutes_string(self.length))
         self.send_message("Optional Prompt for this WW is: %s" % self.prompt)
         self.notify_nics()
         self.timestarted = datetime.today()
@@ -91,21 +91,22 @@ class WordWar():
 
     def status_word_war(self, user):
         self.wwqueue.irc_send_msg(user, "name: " + self.name)
-        self.wwqueue.irc_send_msg(user, "length: " + str(self.length))
-        self.wwqueue.irc_send_msg(user, "start: " + str(self.start))
+        self.wwqueue.irc_send_msg(user, "length: " + botutils.minutes_string(self.length))
         if (self.status == 0):
             self.wwqueue.irc_send_msg(user, "status: waiting")
-            self.wwqueue.irc_send_msg(user, "called at:" + str(self.timecalled))
+            self.wwqueue.irc_send_msg(user, "called at: " + self.timecalled.strftime('%Y-%m-%d %I:%M:%S %p'))
             interval = timedelta(minutes=self.start)
             then = self.timecalled + interval
             timeleft = then - datetime.today()
-            self.wwqueue.irc_send_msg(user, "time til start (min): " + str(timeleft))
+            self.wwqueue.irc_send_msg(user, "time until start: %s" % (botutils.format_timedelta(timeleft)))
 
         else:
             self.wwqueue.irc_send_msg(user, "status: underway")
-            self.wwqueue.irc_send_msg(user, "started at:" + str(self.timestarted))
+            self.wwqueue.irc_send_msg(user, "started at: " + self.timestarted.strftime('%Y-%m-%d %I:%M:%S %p'))
+            timeleft = self.timestarted + timedelta(minutes=self.length) - datetime.today()
+            self.wwqueue.irc_send_msg(user, "time until end: %s" % (botutils.format_timedelta(timeleft)))
 
-        self.wwqueue.irc_send_msg(user, "number of members " + str(len(self.nicklist)))
+        self.wwqueue.irc_send_msg(user, "number of members: " + str(len(self.nicklist)))
         self.wwqueue.irc_send_msg(user, "-----")
 
     def finish_word_war(self, args):

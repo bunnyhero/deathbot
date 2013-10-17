@@ -19,6 +19,7 @@ import string
 #from wordwar import *
 from wordwar import WordWar
 from wordwar import WordWarManager
+import botutils
 
 deatharray = []
 promptarray = []
@@ -206,8 +207,8 @@ class WordWarBot(irc.IRCClient):
             self.irc_send_say("Yes father.")
         self.irc_send_say("The gauntlet has been thrown... "
                           + user + " called a word war of "
-                          + commandlist[1] + " min starting in "
-                          + commandlist[2] + " minutes.")
+                          + botutils.minutes_string(commandlist[1]) + ", starting in "
+                          + botutils.minutes_string(commandlist[2]) + ".")
         return war
 
     def parse_join_wordwar(self, command, user):
