@@ -128,9 +128,9 @@ class WordWarBot(irc.IRCClient):
         lowmsg = msg.lower()
 
         if lowmsg.find("!startwar") != -1:
-            self.parse_startwar(msg, user)
+            self.parse_startwar(msg, user, "!startwar")
         elif lowmsg.find("!throwdown") != -1:
-            self.parse_throwdown(msg, user)
+            self.parse_startwar(msg, user, "!throwdown")
         elif lowmsg.find("!echo") != -1:
             if (father == 1):
                 self.parse_echo(msg, user)
@@ -159,13 +159,8 @@ class WordWarBot(irc.IRCClient):
             if (self.check_for_daddy(user) == 1):
                 self.irc_send_say("Yes, father.")
             irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
-      #   elif (lowmsg.find(' kill ') != -1) or (lowmsg.find(' die ') != -1):
-                    # death = getRandomDeath()
-                    # if (self.check_for_daddy(user) == 1):
-                           #  self.irc_send_say("Yes, father.");
-                    # irc.IRCClient.say(self, channel, string.strip(user.split("!")[0] + " " + death % self.victim_display))
 
-    def parse_throwdown(self, command, user):
+    def parse_startwar(self, command, user, verb_used):
         print str(datetime.today()) + " | " + command
         print str(datetime.today()) + " | " + user
         short_user = user.split("!")[0]
@@ -175,25 +170,7 @@ class WordWarBot(irc.IRCClient):
 
         commandlist = [c for c in command.split(" ") if c != '']
         if (len(commandlist) < 3):
-            self.irc_send_msg(user, "Throwdown usage: !throwdown " + command_help['!throwdown'][0])
-            return
-
-        war = self.initiate_war(short_user, commandlist)
-        if war != None:
-            self.wwMgr.insert_into_war(war.name, user)
-            self.irc_send_msg(user, "You have been added to WW: " + war.name)
-
-    def parse_startwar(self, command, user):
-        print str(datetime.today()) + " | " + command
-        print str(datetime.today()) + " | " + user
-        short_user = user.split("!")[0]
-        if self.wwMgr.check_existing_war(short_user):
-            self.irc_send_msg(short_user, "Each user can only create one Word War at a time")
-            return
-
-        commandlist = [c for c in command.split(" ") if c != '']
-        if (len(commandlist) < 3):
-            self.irc_send_msg(user, "Start war usage: !startwar " + command_help['!startwar'][0])
+            self.irc_send_msg(user, "Usage: %s %s " % (verb_used, command_help[verb_used][0]))
             return
         war = self.initiate_war(short_user, commandlist)
         if war != None:
