@@ -224,8 +224,8 @@ class WordWarBot(irc.IRCClient):
         if (self.wwMgr.insert_into_war(war, user) == True):
             self.irc_send_msg(user, "You have been added to WW: " + war)
         else:
-            self.irc_send_msg(user, "You have been added to WW: " + war)
-            return
+            self.irc_send_msg(user, "There is no word war named %s" % war)
+        
 
     def print_usage(self, user):
         self.irc_send_msg(user, "Bot Usage:")

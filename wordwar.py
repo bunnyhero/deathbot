@@ -26,6 +26,8 @@ class WordWarManager:
             if (awar.name.lower() == war):
                 print "Adding " + awar.name + " - " + user
                 awar.add_user_to_wordwar(user)
+                return True
+        return False
 
     def create_word_war(self, name, length, start, prompt):
         new_ww = WordWar(name, length, start, self, prompt)
