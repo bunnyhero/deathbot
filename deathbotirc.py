@@ -23,6 +23,14 @@ from wordwar import WordWarManager
 deatharray = []
 promptarray = []
 
+command_help = {
+    "!startwar": ("# ## -> create a war lasting # minutes, starting in ## minutes", 0),
+    "!throwdown": ("# ## -> create a war lasting # minutes, starting in ## minutes", 1),
+    "!status": ("-> list wars that are in progress or not yet started", 2),
+    "!joinwar": ("<warname> -> join a word war so you get PM'd on start", 3),
+    "!time": ("-> what's the server time", 4)
+}
+
 
 def load_death_and_prompt_arrays():
 
@@ -90,7 +98,7 @@ class WordWarBot(irc.IRCClient):
 
     def part_room(self):
         self.part(self.factory.channel)
-        print str(datetime.today()) + " | " + "Oarted on as %s." % (self.nickname,)
+        print str(datetime.today()) + " | " + "Parted as %s." % (self.nickname,)
 
     def joined(self, channel):
         print str(datetime.today()) + " | " + "Joined %s." % (channel,)
@@ -166,8 +174,7 @@ class WordWarBot(irc.IRCClient):
 
         commandlist = [c for c in command.split(" ") if c != '']
         if (len(commandlist) < 3):
-            self.irc_send_msg(
-                user, "Thrown down usage: !throwdown # ## -> create a war for # minutes starting in ## minutes")
+            self.irc_send_msg(user, "Throwdown usage: !throwdown " + command_help['!throwdown'][0])
             return
 
         war = self.initiate_war(short_user, commandlist)
@@ -185,8 +192,7 @@ class WordWarBot(irc.IRCClient):
 
         commandlist = [c for c in command.split(" ") if c != '']
         if (len(commandlist) < 3):
-            self.irc_send_msg(
-                user, "Start war usage: !startwar # ## -> create a war for # minutes starting in ## minutes")
+            self.irc_send_msg(user, "Start war usage: !startwar " + command_help['!startwar'][0])
             return
         war = self.initiate_war(short_user, commandlist)
         if war != None:
@@ -221,14 +227,11 @@ class WordWarBot(irc.IRCClient):
             return
 
     def print_usage(self, user):
-        self.irc_send_msg(user, "DeathBot Usage:")
-        self.irc_send_msg(
-            user, "!startwar # ## -> create a war for # minutes starting in ## minutes")
-        self.irc_send_msg(user, "!status -> list wars that are in progress or not yet started")
-        self.irc_send_msg(user, "!joinwar <warname> -> join a word war so you get msg'ed on start")
-        self.irc_send_msg(
-            user, "!throwdown # ## - create a war for # minutes starting in ## minutes; add you automatically to your war.")
-        self.irc_send_msg(user, "!time -> what's the server time")
+        self.irc_send_msg(user, "Bot Usage:")
+        # sort the help items by ordinal
+        help_items = sorted(command_help.items(), key=lambda item: item[1][1])
+        for help in help_items:
+            self.irc_send_msg(user, help[0] + " " + help[1][0])
 
     def irc_send_me(self, message):
         irc.IRCClient.describe(self, self.channel, message)
