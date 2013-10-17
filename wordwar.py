@@ -65,29 +65,26 @@ class WordWar():
         self.start = int(start)
         self.timecalled = datetime.today()
         self.wwqueue = queue
-        self.war_start_timer = Timer(self.start * 60, self.start_word_war, [self])
-        self.war_start_timer.start()
+        self.war_start_timer = reactor.callLater(self.start * 60, self.start_word_war)
         self.timestarted = ""
         if (int(self.start) > 2):
-            self.war_warning_timer = Timer((self.start - 2) * 60, self.warning_word_war, [self])
-            self.war_warning_timer.start()
+            self.war_warning_timer = reactor.callLater((self.start - 2) * 60, self.warning_word_war)
         self.status = 0
 
-    def warning_word_war(self, args):
+    def warning_word_war(self):
         self.send_message("WW: " + self.name + " starts in 2 minutes for " + botutils.minutes_string(self.length))
         self.send_message("Optional Prompt for this WW is: %s" % self.prompt)
-        self.notify_nics()
+        self.notify_nicks()
 
-    def start_word_war(self, args):
+    def start_word_war(self):
         # send out message
         self.status = 1
         self.send_message(
             "GOOOOOOOOOOO!!! WW: " + self.name + " for " + botutils.minutes_string(self.length))
         self.send_message("Optional Prompt for this WW is: %s" % self.prompt)
-        self.notify_nics()
+        self.notify_nicks()
         self.timestarted = datetime.today()
-        self.war_timer = Timer(float(self.length) * 60.0, self.finish_word_war, [self])
-        self.war_timer.start()
+        self.war_timer = reactor.callLater(float(self.length) * 60.0, self.finish_word_war)
 
     def status_word_war(self, user):
         self.wwqueue.irc_send_msg(user, "name: " + self.name)
@@ -109,19 +106,19 @@ class WordWar():
         self.wwqueue.irc_send_msg(user, "number of members: " + str(len(self.nicklist)))
         self.wwqueue.irc_send_msg(user, "-----")
 
-    def finish_word_war(self, args):
+    def finish_word_war(self):
         # remove from queue
         print str(datetime.today()) + " | " + "finish word war"
         print str(datetime.today()) + " | " + "remove from queue"
         self.send_message("WW: " + self.name + " is done - send your results")
-        self.notify_nics()
+        self.notify_nicks()
 
         self.wwqueue.done_word_war(self)
 
     def add_user_to_wordwar(self, username):
         self.nicklist.append(username)
 
-    def notify_nics(self):
+    def notify_nicks(self):
         second_message = "Hey! That means you: "
         for nick in self.nicklist:
             shortnick = nick.split("!")
