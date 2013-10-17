@@ -128,7 +128,7 @@ class WordWarBot(irc.IRCClient):
         elif lowmsg.find("!status") != -1:
             self.wwMgr.get_status(user)
         elif lowmsg.find("!time") != -1:
-            self.irc_send_msg(channel, "thinks the time is " + str(datetime.today()))
+            self.irc_send_me("thinks the time is " + datetime.today().strftime('%Y-%m-%d %I:%M:%S %p'))
         elif lowmsg.find("!joinwar") != -1:
             self.parse_join_wordwar(msg, user)
         elif lowmsg.find("!help") != -1:
