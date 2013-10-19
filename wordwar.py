@@ -13,7 +13,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class WordWarManager:
+class WordWarManager(object):
     ww_queue = []
 
     def __init__(self, irc):
@@ -64,7 +64,7 @@ class WordWarManager:
         self.irc.irc_send_msg(user.split("!")[0], message)
 
 
-class WordWar():
+class WordWar(object):
 
     def __init__(self, name, length, start, queue, prompt):
         logger.debug("WordWar(%s, %s, %s, %s)" % (name, length, start, prompt))
