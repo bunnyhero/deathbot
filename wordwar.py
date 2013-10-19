@@ -19,18 +19,21 @@ class WordWarManager:
     def __init__(self, irc):
         self.irc = irc
 
-    def check_existing_war(self, user):
+    def check_existing_war(self, war_name):
         for war in self.ww_queue:
-            if (war.name == user):
+            if (war.name == war_name):
                 return True
         return False
 
-    def insert_into_war(self, war, user):
+    def insert_into_war(self, war_name, user):
+        logger.debug("insert %s into wordwar '%s'", user, war_name)
         for awar in self.ww_queue:
-            if (awar.name.lower() == war):
-                logger.info("Adding " + awar.name + " - " + user)
+            logger.debug("checking wordwar '%s'", awar.name)
+            if (awar.name.lower() == war_name):
+                logger.info("Adding %s - %s", awar.name, user)
                 awar.add_user_to_wordwar(user)
                 return True
+        logger.info("Could not find wordwar '%s'", war_name)
         return False
 
     def create_word_war(self, name, length, start, prompt):
@@ -64,6 +67,7 @@ class WordWarManager:
 class WordWar():
 
     def __init__(self, name, length, start, queue, prompt):
+        logger.debug("WordWar(%s, %s, %s, %s)" % (name, length, start, prompt))
         self.nicklist = []
         self.name = name
         self.prompt = prompt
@@ -122,7 +126,9 @@ class WordWar():
         self.wwqueue.done_word_war(self)
 
     def add_user_to_wordwar(self, username):
+        logger.debug("add_user_to_wordwar(): ww %s, user %s", self.name, username)
         self.nicklist.append(username)
+        logger.debug("ww %s nicklist now %s", self.name, self.nicklist)
 
     def notify_nicks(self):
         second_message = "Hey! That means you: "

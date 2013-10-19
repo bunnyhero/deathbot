@@ -180,13 +180,13 @@ class WordWarBot(irc.IRCClient):
             if self.wwMgr.insert_into_war(war.name, user):
                 self.irc_send_msg(user, "You have been added to WW: " + war.name)
 
-    def initiate_war(self, user, commandlist):
-        war = self.wwMgr.create_word_war(user, commandlist[1], commandlist[2], getRandomPrompt())
-        logger.info("Create word war " + user + " length " + commandlist[1] + " starting in " + commandlist[2])
-        if (self.check_for_daddy(user) == 1):
+    def initiate_war(self, short_user, commandlist):
+        war = self.wwMgr.create_word_war(short_user, commandlist[1], commandlist[2], getRandomPrompt())
+        logger.info("Create word war %s length %s starting in %s", short_user, commandlist[1], commandlist[2])
+        if (self.check_for_daddy(short_user) == 1):
             self.irc_send_say("Yes father.")
         self.irc_send_say("The gauntlet has been thrown... "
-                          + user + " called a word war of "
+                          + short_user + " called a word war of "
                           + botutils.minutes_string(commandlist[1]) + ", starting in "
                           + botutils.minutes_string(commandlist[2]) + ".")
         return war
@@ -200,11 +200,11 @@ class WordWarBot(irc.IRCClient):
         if len(commandlist) < 2:
             return
 
-        war = username
-        if (self.wwMgr.insert_into_war(war, user) == True):
-            self.irc_send_msg(user, "You have been added to WW: " + war)
+        war_name = username
+        if (self.wwMgr.insert_into_war(war_name, user) == True):
+            self.irc_send_msg(user, "You have been added to WW: " + war_name)
         else:
-            self.irc_send_msg(user, "There is no word war named %s" % war)
+            self.irc_send_msg(user, "There is no word war named %s" % war_name)
         
 
     def print_usage(self, user):
@@ -246,7 +246,7 @@ class WordWarBotFactory(protocol.ClientFactory):
 
 def config_logger():
     log_format = '%(asctime)s %(levelname)s:%(name)s | %(message)s'
-    logging.basicConfig(filename='ebot.log', format=log_format, level=logging.INFO)
+    logging.basicConfig(filename='ebot.log', format=log_format, level=logging.DEBUG)
     # add a console logger too
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
