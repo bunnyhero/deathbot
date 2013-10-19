@@ -128,40 +128,42 @@ class WordWarBot(irc.IRCClient):
 
     def privmsg(self, user, channel, msg):
         father = self.check_for_daddy(user)
+        msg = irc.stripFormatting(msg).strip()
         lowmsg = msg.lower()
 
-        if lowmsg.find("!startwar") != -1:
-            self.parse_startwar(msg, user, "!startwar")
-        elif lowmsg.find("!throwdown") != -1:
-            self.parse_startwar(msg, user, "!throwdown")
-        elif lowmsg.find("!echo") != -1:
-            if (father == 1):
-                self.parse_echo(msg, user)
-        elif lowmsg.find("!status") != -1:
-            self.wwMgr.get_status(user)
-        elif lowmsg.find("!time") != -1:
-            self.irc_send_me("thinks the time is " + datetime.today().strftime('%Y-%m-%d %I:%M:%S %p'))
-        elif lowmsg.find("!joinwar") != -1:
-            self.parse_join_wordwar(msg, user)
-        elif lowmsg.find("!help") != -1:
-            self.print_usage(user)
-        elif lowmsg.startswith("!reloaddeath"):
-            load_death_and_prompt_arrays()
-        elif lowmsg.startswith("!rejoinroom"):
-            self.signedOn()
-        elif lowmsg.startswith("!leaveroom"):
-            if (father == 1):
-                self.part_room()
-        elif lowmsg.find("!changevictim") != -1:
-            self.parse_changevictim(msg, user)
-        elif lowmsg.find("!victim") != -1:
-            if (father == 1):
-                self.irc_send_msg(user, "The victim is currently: " + self.victim)
-        elif lowmsg.find("!prompt") != -1:
-            prompt = getRandomPrompt()
-            if (self.check_for_daddy(user) == 1):
-                self.irc_send_say("Yes, father.")
-            irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
+        # handle !commands
+        if lowmsg.startswith('!'):
+            command = lowmsg.split(' ')[0]
+            if command == "!startwar" or command == "!throwdown":
+                self.parse_startwar(msg, user, command)
+            elif command == "!echo":
+                if (father == 1):
+                    self.parse_echo(msg, user)
+            elif command == "!status":
+                self.wwMgr.get_status(user)
+            elif command == "!time":
+                self.irc_send_me("thinks the time is " + datetime.today().strftime('%Y-%m-%d %I:%M:%S %p'))
+            elif command == "!joinwar":
+                self.parse_join_wordwar(msg, user)
+            elif command == "!help":
+                self.print_usage(user)
+            elif command == "!reloaddeath":
+                load_death_and_prompt_arrays()
+            elif command == "!rejoinroom":
+                self.signedOn()
+            elif command == "!leaveroom":
+                if (father == 1):
+                    self.part_room()
+            elif command == "!changevictim":
+                self.parse_changevictim(msg, user)
+            elif command == "!victim":
+                if (father == 1):
+                    self.irc_send_msg(user, "The victim is currently: " + self.victim)
+            elif command == "!prompt":
+                prompt = getRandomPrompt()
+                if (self.check_for_daddy(user) == 1):
+                    self.irc_send_say("Yes, father.")
+                irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
 
     def parse_startwar(self, command, user, verb_used):
         logger.info(command)
