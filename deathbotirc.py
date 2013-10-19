@@ -20,6 +20,9 @@ import string
 from wordwar import WordWar
 from wordwar import WordWarManager
 import botutils
+import logging
+
+logger = logging.getLogger()
 
 deatharray = []
 promptarray = []
@@ -51,11 +54,11 @@ def load_death_and_prompt_arrays():
         promptarray.remove(item)
 
     f = open("promptlist.txt", "r")
-    print str(datetime.today()) + " | " + "Reloading Prompt Array"
+    logger.info("Reloading Prompt Array")
 
     for line in f.readlines():
         promptarray.append(string.strip(line))
-        print str(datetime.today()) + " | " + "adding " + line
+        logger.info("adding " + line)
     f.close()
 
 
@@ -95,14 +98,14 @@ class WordWarBot(irc.IRCClient):
 
     def signedOn(self):
         self.join(self.factory.channel)
-        print str(datetime.today()) + " | " + "Signed on as %s." % (self.nickname,)
+        logger.info("Signed on as %s." % (self.nickname,))
 
     def part_room(self):
         self.part(self.factory.channel)
-        print str(datetime.today()) + " | " + "Parted as %s." % (self.nickname,)
+        logger.info("Parted as %s." % (self.nickname,))
 
     def joined(self, channel):
-        print str(datetime.today()) + " | " + "Joined %s." % (channel,)
+        logger.info("Joined %s." % (channel,))
         self.channel = channel
 
     def check_for_daddy(self, user):
@@ -161,8 +164,8 @@ class WordWarBot(irc.IRCClient):
             irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
 
     def parse_startwar(self, command, user, verb_used):
-        print str(datetime.today()) + " | " + command
-        print str(datetime.today()) + " | " + user
+        logger.info(command)
+        logger.info(user)
         short_user = user.split("!")[0]
         if self.wwMgr.check_existing_war(short_user):
             self.irc_send_msg(short_user, "Each user can only create one Word War at a time")
@@ -179,7 +182,7 @@ class WordWarBot(irc.IRCClient):
 
     def initiate_war(self, user, commandlist):
         war = self.wwMgr.create_word_war(user, commandlist[1], commandlist[2], getRandomPrompt())
-        print str(datetime.today()) + " | " + "Create word war " + user + " length " + commandlist[1] + " starting in " + commandlist[2]
+        logger.info("Create word war " + user + " length " + commandlist[1] + " starting in " + commandlist[2])
         if (self.check_for_daddy(user) == 1):
             self.irc_send_say("Yes father.")
         self.irc_send_say("The gauntlet has been thrown... "
@@ -191,7 +194,7 @@ class WordWarBot(irc.IRCClient):
     def parse_join_wordwar(self, command, user):
         if (self.check_for_daddy(user) == 1):
             self.irc_send_say("Yes father.")
-        print command
+        logger.info(command)
         commandlist = [c for c in command.split(" ") if c != '']
         username = commandlist[1].lower()
         if len(commandlist) < 2:
@@ -213,15 +216,15 @@ class WordWarBot(irc.IRCClient):
 
     def irc_send_me(self, message):
         irc.IRCClient.describe(self, self.channel, message)
-        print str(datetime.today()) + " | " + self.channel + " -- me --> " + message
+        logger.info(self.channel + " -- me --> " + message)
 
     def irc_send_say(self, message):
         irc.IRCClient.say(self, self.channel, message)
-        print str(datetime.today()) + " | " + self.channel + " -- say --> " + message
+        logger.info(self.channel + " -- say --> " + message)
 
     def irc_send_msg(self, user, message):
         irc.IRCClient.msg(self, user.split("!")[0], message)
-        print str(datetime.today()) + " | " + self.channel + " -- msg: " + user + " --> " + message
+        logger.info(self.channel + " -- msg: " + user + " --> " + message)
 
 #    irc.IRCClient.describe(self, channel, "heard:" + msg);
 
@@ -234,18 +237,37 @@ class WordWarBotFactory(protocol.ClientFactory):
         self.nickname = nickname
 
     def clientConnectionLost(self, connector, reason):
-        print str(datetime.today()) + " | " + "Lost connection (%s), reconnecting." % (reason,)
+        logger.info("Lost connection (%s), reconnecting." % (reason,))
         connector.connect()
 
     def clientConnectionFailed(self, connector, reason):
-        print str(datetime.today()) + " | " + "Could not connect: %s" % (reason,)
+        logger.info("Could not connect: %s" % (reason,))
 
+
+def config_logger():
+    log_format = '%(asctime)s %(levelname)s:%(name)s | %(message)s'
+    logging.basicConfig(filename='ebot.log', format=log_format, level=logging.INFO)
+    # add a console logger too
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    # create formatter
+    formatter = logging.Formatter(log_format)
+
+    # add formatter to ch
+    ch.setFormatter(formatter)
+
+    logging.getLogger().addHandler(ch)
 
 if __name__ == "__main__":
+
+    config_logger()
+
     parser = argparse.ArgumentParser(description='word war bot')
     parser.add_argument('channel', help='channel to join (without the #)')
     parser.add_argument('nick', help='nick for the bot')
     args = parser.parse_args()
+
+    logger.info(args)
 
     chan = args.channel
     nick = args.nick

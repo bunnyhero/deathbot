@@ -9,6 +9,10 @@ from threading import Timer
 import string
 import botutils
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class WordWarManager:
     ww_queue = []
 
@@ -24,7 +28,7 @@ class WordWarManager:
     def insert_into_war(self, war, user):
         for awar in self.ww_queue:
             if (awar.name.lower() == war):
-                print "Adding " + awar.name + " - " + user
+                logger.info("Adding " + awar.name + " - " + user)
                 awar.add_user_to_wordwar(user)
                 return True
         return False
@@ -110,8 +114,8 @@ class WordWar():
 
     def finish_word_war(self):
         # remove from queue
-        print str(datetime.today()) + " | " + "finish word war"
-        print str(datetime.today()) + " | " + "remove from queue"
+        logger.info("finish word war")
+        logger.info("remove from queue")
         self.send_message("WW: " + self.name + " is done - send your results")
         self.notify_nicks()
 
