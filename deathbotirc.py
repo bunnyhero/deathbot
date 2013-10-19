@@ -174,8 +174,8 @@ class WordWarBot(irc.IRCClient):
             return
         war = self.initiate_war(short_user, commandlist)
         if war != None:
-            self.wwMgr.insert_into_war(war.name, user)
-        self.irc_send_msg(user, "You have been added to WW: " + war.name)
+            if self.wwMgr.insert_into_war(war.name, user):
+                self.irc_send_msg(user, "You have been added to WW: " + war.name)
 
     def initiate_war(self, user, commandlist):
         war = self.wwMgr.create_word_war(user, commandlist[1], commandlist[2], getRandomPrompt())
