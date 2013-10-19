@@ -176,9 +176,9 @@ class WordWarBot(irc.IRCClient):
             self.irc_send_msg(user, "Usage: %s %s " % (verb_used, command_help[verb_used][0]))
             return
         war = self.initiate_war(short_user, commandlist)
-        if war != None:
-            if self.wwMgr.insert_into_war(war.name, user):
-                self.irc_send_msg(user, "You have been added to WW: " + war.name)
+        if war is not None:
+            war.add_user_to_wordwar(user)
+            self.irc_send_msg(user, "You have been added to WW: %s" % (war.name,))
 
     def initiate_war(self, short_user, commandlist):
         war = self.wwMgr.create_word_war(short_user, commandlist[1], commandlist[2], getRandomPrompt())
