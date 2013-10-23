@@ -228,7 +228,21 @@ class WordWarBot(irc.IRCClient):
         irc.IRCClient.msg(self, user.split("!")[0], message)
         logger.info(self.channel + " -- msg: " + user + " --> " + message)
 
-#    irc.IRCClient.describe(self, channel, "heard:" + msg);
+
+    def action(self, user, channel, data):
+        """ called when a user does something in the channel """
+        logger.info("%s: user '%s' did '%s'", channel, user, data)
+
+        short_user = user.split('!')[0]
+
+        # did this involve the bot?
+        action = data.lower()
+        pos = action.find(self.nickname.lower())
+        if pos != -1:
+            verb_clause = action[0:pos].lower().strip()
+            if verb_clause == "hugs":
+                # hug back after a delay
+                reactor.callLater(1.0, self.irc_send_me, "hugs %s" % short_user)
 
 
 class WordWarBotFactory(protocol.ClientFactory):
