@@ -209,6 +209,7 @@ class WordWarBot(irc.IRCClient):
             self.irc_send_msg(user, "There is no word war named %s" % war_name)
         
 
+
     def print_usage(self, user):
         self.irc_send_msg(user, "Bot Usage:")
         # sort the help items by ordinal
@@ -236,7 +237,7 @@ class WordWarBot(irc.IRCClient):
         short_user = user.split('!')[0]
 
         # did this involve the bot?
-        action = data.lower()
+        action = irc.stripFormatting(data).lower()
         pos = action.find(self.nickname.lower())
         if pos != -1:
             verb_clause = action[0:pos].lower().strip()
