@@ -10,7 +10,7 @@ import argparse
 
 from twisted.words.protocols import irc
 from twisted.internet import protocol
-from random import *
+import random
 import sys
 from twisted.internet import reactor
 from datetime import *
@@ -21,6 +21,7 @@ from wordwar import WordWar
 from wordwar import WordWarManager
 import botutils
 import logging
+import shlex
 
 logger = logging.getLogger()
 
@@ -63,14 +64,12 @@ def load_death_and_prompt_arrays():
 
 
 def getRandomDeath():
-    index = randrange(len(deatharray))
-    death = deatharray[index]
+    death = random.choice(deatharray)
     return death
 
 
 def getRandomPrompt():
-    index = randrange(len(promptarray))
-    prompt = promptarray[index]
+    prompt = random.choice(promptarray)
     return prompt
 
 
@@ -164,6 +163,9 @@ class WordWarBot(irc.IRCClient):
                 if (self.check_for_daddy(user) == 1):
                     self.irc_send_say("Yes, father.")
                 irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
+            elif command == "!decide":
+                self.parse_decide(msg)
+
 
     def parse_startwar(self, command, user, verb_used):
         logger.info(command)
@@ -208,6 +210,16 @@ class WordWarBot(irc.IRCClient):
         else:
             self.irc_send_msg(user, "There is no word war named %s" % war_name)
         
+    def parse_decide(self, msg):
+        """ Chooses one random option """
+        msg = irc.stripFormatting(msg).strip()
+        choices = shlex.split(msg)
+        if len(choices) < 3:
+            self.irc_send_say("please provide 2 or more options")
+            return
+
+        del choices[0]
+        self.irc_send_say("the dice choose: %s" % random.choice(choices))
 
 
     def print_usage(self, user):
