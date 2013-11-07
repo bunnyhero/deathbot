@@ -194,6 +194,7 @@ class WordWarBot(irc.IRCClient):
                           + short_user + " called a word war of "
                           + botutils.minutes_string(commandlist[1]) + ", starting in "
                           + botutils.minutes_string(commandlist[2]) + ".")
+        self.irc_send_say("Optional Prompt for this WW is: %s" % war.prompt)
         return war
 
     def parse_join_wordwar(self, command, user):
