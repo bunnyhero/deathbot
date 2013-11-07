@@ -120,7 +120,7 @@ class WordWar(object):
         # remove from queue
         logger.info("finish word war")
         logger.info("remove from queue")
-        self.send_message("WW: " + self.name + " is done - send your results")
+        self.send_message("WW: " + self.name + " is done - share your results")
         self.notify_nicks()
 
         self.wwqueue.done_word_war(self)
