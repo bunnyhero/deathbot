@@ -259,6 +259,9 @@ class WordWarBot(irc.IRCClient):
                 # hug back after a delay
                 reactor.callLater(1.0, self.irc_send_me, "hugs %s" % short_user)
 
+    def userRenamed(self, oldname, newname):
+        logger.info("user '%s' renamed to '%s'", oldname, newname)
+        self.wwMgr.rename_user(oldname, newname)
 
 class WordWarBotFactory(protocol.ClientFactory):
     protocol = WordWarBot

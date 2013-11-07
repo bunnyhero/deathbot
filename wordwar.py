@@ -54,6 +54,11 @@ class WordWarManager(object):
         for ww in self.ww_queue:
             ww.status_word_war(user)
 
+    def rename_user(self, oldname, newname):
+        logger.info("updating nick change from %s to %s" ,oldname, newname)
+        for war in self.ww_queue:
+            war.rename_user(oldname, newname)
+
     def irc_send_me(self, message):
         self.irc.irc_send_me(message)
 
@@ -129,6 +134,20 @@ class WordWar(object):
         logger.debug("add_user_to_wordwar(): ww %s, user %s", self.name, username)
         self.nicklist.append(username)
         logger.debug("ww %s nicklist now %s", self.name, self.nicklist)
+
+    def rename_user(self, oldname, newname):
+        # note: these are short names only! so the test is annoying.
+        for i, nick in enumerate(self.nicklist):
+            nick_parts = nick.split('!')
+            if nick_parts[0] == oldname:
+                self.nicklist[i] = '!'.join([newname] + nick_parts[1:])
+                logger.info("updated '%s' to '%s' in word war '%s'", oldname, newname, self.name)
+
+        # also rename self if appropriate!
+        if oldname == self.name:
+            old_war_name = self.name
+            self.name = newname
+            logger.info("word war '%s' renamed to '%s'", old_war_name, self.name)
 
     def notify_nicks(self):
         short_nicks = ' '.join([nick.split('!')[0] for nick in self.nicklist])
