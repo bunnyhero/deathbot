@@ -118,7 +118,8 @@ class WordWar(object):
             timeleft = self.timestarted + timedelta(minutes=self.length) - datetime.today()
             self.wwqueue.irc_send_msg(user, "time until end: %s" % (botutils.format_timedelta(timeleft)))
 
-        self.wwqueue.irc_send_msg(user, "number of members: " + str(len(self.nicklist)))
+        self.wwqueue.irc_send_msg(user, "members (%d): %s" % (len(self.nicklist),
+                                                                    ' '.join([nick.split('!')[0] for nick in self.nicklist])))
         self.wwqueue.irc_send_msg(user, "-----")
 
     def finish_word_war(self):
