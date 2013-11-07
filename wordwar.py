@@ -131,11 +131,8 @@ class WordWar(object):
         logger.debug("ww %s nicklist now %s", self.name, self.nicklist)
 
     def notify_nicks(self):
-        second_message = "Hey! That means you: "
-        for nick in self.nicklist:
-            shortnick = nick.split("!")
-            second_message = second_message + shortnick[0] + " "
-        self.wwqueue.irc_send_say(second_message)
+        short_nicks = ' '.join([nick.split('!')[0] for nick in self.nicklist])
+        self.wwqueue.irc_send_say("Hey! That means you: %s" % short_nicks)
 
     def send_message(self, message):
         self.wwqueue.irc_send_say(message)
