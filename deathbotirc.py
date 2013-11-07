@@ -33,7 +33,8 @@ command_help = {
     "!throwdown": ("# ## -> create a war lasting # minutes, starting in ## minutes", 1),
     "!status": ("-> list wars that are in progress or not yet started", 2),
     "!joinwar": ("<warname> -> join a word war so you get PM'd on start", 3),
-    "!time": ("-> what's the server time", 4)
+    "!time": ("-> what's the server time", 4),
+    "!decide": ('"option 1" "option 2" ["option 3"...] -> choose randomly between options', 5),
 }
 
 
