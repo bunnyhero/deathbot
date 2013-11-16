@@ -36,6 +36,17 @@ class WordWarManager(object):
         logger.info("Could not find wordwar '%s'", war_name)
         return False
 
+    def remove_from_war(self, war_name, user):
+        logger.debug("remove %s from wordwar '%s'", user, war_name)
+        for awar in self.ww_queue:
+            logger.debug("checking wordwar '%s'", awar.name)
+            if (awar.name.lower() == war_name):
+                logger.info("removing %s - %s", awar.name, user)
+                return awar.remove_user_from_wordwar(user)
+        logger.info("Could not find wordwar '%s'", war_name)
+        return False
+
+
     def create_word_war(self, name, length, start, prompt):
         new_ww = WordWar(name, length, start, self, prompt)
         self.ww_queue.append(new_ww)
@@ -135,6 +146,19 @@ class WordWar(object):
         logger.debug("add_user_to_wordwar(): ww %s, user %s", self.name, username)
         self.nicklist.append(username)
         logger.debug("ww %s nicklist now %s", self.name, self.nicklist)
+
+
+    def remove_user_from_wordwar(self, username):
+        logger.debug("remove_user_from_wordwar(): ww %s, user %s", self.name, username)
+        try:
+            self.nicklist.remove(username)
+        except ValueError:
+            logger.debug("%s is not in ww %s's nicklist", username, self.name)
+            return False
+
+        logger.debug("ww %s nicklist now %s", self.name, self.nicklist)
+        return True
+
 
     def rename_user(self, oldname, newname):
         # note: these are short names only! so the test is annoying.

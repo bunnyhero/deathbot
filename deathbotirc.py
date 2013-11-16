@@ -33,8 +33,9 @@ command_help = {
     "!throwdown": ("# ## -> create a war lasting # minutes, starting in ## minutes", 1),
     "!status": ("-> list wars that are in progress or not yet started", 2),
     "!joinwar": ("<warname> -> join a word war so you get PM'd on start", 3),
-    "!time": ("-> what's the server time", 4),
-    "!decide": ('"option 1" "option 2" ["option 3"...] -> choose randomly between options', 5),
+    "!leavewar": ("<warname> -> leave a word war", 4),
+    "!time": ("-> what's the server time", 5),
+    "!decide": ('"option 1" "option 2" ["option 3"...] -> choose randomly between options', 6),
 }
 
 
@@ -145,6 +146,8 @@ class WordWarBot(irc.IRCClient):
                 self.irc_send_me("thinks the time is " + datetime.today().strftime('%Y-%m-%d %I:%M:%S %p'))
             elif command == "!joinwar":
                 self.parse_join_wordwar(msg, user)
+            elif command == "!leavewar" or command == "!forfeit" or command == "!surrender":
+                self.parse_leave_wordwar(msg, user)
             elif command == "!help":
                 self.print_usage(user)
             elif command == "!reloaddeath":
@@ -202,16 +205,30 @@ class WordWarBot(irc.IRCClient):
             self.irc_send_say("Yes father.")
         logger.info(command)
         commandlist = [c for c in command.split(" ") if c != '']
-        username = commandlist[1].lower()
-        if len(commandlist) < 2:
+        if len(commandlist) != 2:
+            self.irc_send_msg(user, "Usage: %s %s " % (commandlist[0], command_help[commandlist[0]][0]))
             return
 
-        war_name = username
-        if (self.wwMgr.insert_into_war(war_name, user) == True):
+        war_name = commandlist[1].lower()
+        if self.wwMgr.insert_into_war(war_name, user):
             self.irc_send_msg(user, "You have been added to WW: " + war_name)
         else:
             self.irc_send_msg(user, "There is no word war named %s" % war_name)
-        
+    
+
+    def parse_leave_wordwar(self, command, user):
+        logger.info(command)
+        commandlist = [c for c in command.split(" ") if c != '']
+        if len(commandlist) != 2:
+            self.irc_send_msg(user, "Usage: %s %s " % (commandlist[0], command_help[commandlist[0]][0]))
+            return
+
+        war_name = commandlist[1].lower()
+        if self.wwMgr.remove_from_war(war_name, user):
+            self.irc_send_msg(user, "You have been removed from WW: %s" % war_name)
+        else:
+            self.irc_send_msg(user, "You are not part of word war %s" % war_name)
+
     def parse_decide(self, msg):
         """ Chooses one random option """
         msg = irc.stripFormatting(msg).strip()
