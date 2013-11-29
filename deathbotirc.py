@@ -168,7 +168,7 @@ class WordWarBot(irc.IRCClient):
                     self.irc_send_say("Yes, father.")
                 irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
             elif command == "!decide":
-                self.parse_decide(msg)
+                self.parse_decide(msg, user)
 
 
     def parse_startwar(self, command, user, verb_used):
@@ -229,16 +229,17 @@ class WordWarBot(irc.IRCClient):
         else:
             self.irc_send_msg(user, "You are not part of word war %s" % war_name)
 
-    def parse_decide(self, msg):
+    def parse_decide(self, msg, user):
         """ Chooses one random option """
+        short_user = user.split("!")[0]        
         msg = irc.stripFormatting(msg).strip()
         choices = shlex.split(msg)
         if len(choices) < 3:
-            self.irc_send_say("please provide 2 or more options")
+            self.irc_send_say("%s, please provide 2 or more options" % short_user)
             return
 
         del choices[0]
-        self.irc_send_say("the dice choose: %s" % random.choice(choices))
+        self.irc_send_say("%s, the dice choose: %s" % (short_user, random.choice(choices)))
 
 
     def print_usage(self, user):
