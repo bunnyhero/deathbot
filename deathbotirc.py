@@ -137,6 +137,8 @@ class WordWarBot(irc.IRCClient):
             command = lowmsg.split(' ')[0]
             if command == "!startwar" or command == "!throwdown":
                 self.parse_startwar(msg, user, command)
+            elif command == "!starwar":
+                self.parse_starwars(msg, user)
             elif command == "!echo":
                 if (father == 1):
                     self.parse_echo(msg, user)
@@ -169,6 +171,13 @@ class WordWarBot(irc.IRCClient):
                 irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
             elif command == "!decide":
                 self.parse_decide(msg, user)
+
+    def parse_starwars(self, msg, user):
+        logger.info(msg)
+        short_user = user.split("!")[0]
+        self.irc_send_say("%s: \x02Star Wars The Force Awakens\x0f opens Dec 17" % short_user)
+        self.irc_send_say("(perhaps you meant to use \x02!startwar\x0f ?)")
+
 
     def parse_startwar(self, msg, user, verb_used):
         logger.info(msg)
