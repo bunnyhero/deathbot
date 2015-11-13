@@ -209,7 +209,7 @@ class WordWarBot(irc.IRCClient):
             self.irc_send_msg(user, "Usage: %s %s " % (commandlist[0], command_help[commandlist[0]][0]))
             return
 
-        war_name = commandlist[1].lower()
+        war_name = commandlist[1]
         if self.wwMgr.insert_into_war(war_name, user):
             self.irc_send_msg(user, "You have been added to WW: " + war_name)
         else:
@@ -223,7 +223,7 @@ class WordWarBot(irc.IRCClient):
             self.irc_send_msg(user, "Usage: %s %s " % (commandlist[0], command_help[commandlist[0]][0]))
             return
 
-        war_name = commandlist[1].lower()
+        war_name = commandlist[1]
         if self.wwMgr.remove_from_war(war_name, user):
             self.irc_send_msg(user, "You have been removed from WW: %s" % war_name)
         else:
