@@ -111,7 +111,7 @@ class WordWarBot(irc.IRCClient):
 
     def check_for_daddy(self, user):
         short_user = user.split("!")[0]
-        if (short_user == "smlangley"):
+        if (short_user == "bunnyhero"):
             return 1
         else:
             return 0
@@ -164,8 +164,8 @@ class WordWarBot(irc.IRCClient):
                     self.irc_send_msg(user, "The victim is currently: " + self.victim)
             elif command == "!prompt":
                 prompt = getRandomPrompt()
-                if (self.check_for_daddy(user) == 1):
-                    self.irc_send_say("Yes, father.")
+                # if (self.check_for_daddy(user) == 1):
+                #     self.irc_send_say("Yes, father.")
                 irc.IRCClient.say(self, channel, string.strip("Here's one: %s" % prompt))
             elif command == "!decide":
                 self.parse_decide(msg, user)
@@ -191,8 +191,8 @@ class WordWarBot(irc.IRCClient):
     def initiate_war(self, short_user, commandlist):
         war = self.wwMgr.create_word_war(short_user, commandlist[1], commandlist[2], getRandomPrompt())
         logger.info("Create word war %s length %s starting in %s", short_user, commandlist[1], commandlist[2])
-        if (self.check_for_daddy(short_user) == 1):
-            self.irc_send_say("Yes father.")
+        # if (self.check_for_daddy(short_user) == 1):
+        #     self.irc_send_say("Yes father.")
         self.irc_send_say("The gauntlet has been thrown... "
                           + short_user + " called a word war of "
                           + botutils.minutes_string(commandlist[1]) + ", starting in "
@@ -201,8 +201,8 @@ class WordWarBot(irc.IRCClient):
         return war
 
     def parse_join_wordwar(self, command, user):
-        if (self.check_for_daddy(user) == 1):
-            self.irc_send_say("Yes father.")
+        # if (self.check_for_daddy(user) == 1):
+        #     self.irc_send_say("Yes father.")
         logger.info(command)
         commandlist = [c for c in command.split(" ") if c != '']
         if len(commandlist) != 2:
