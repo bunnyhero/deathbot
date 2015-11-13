@@ -19,30 +19,30 @@ class WordWarManager(object):
     def __init__(self, irc):
         self.irc = irc
 
+    def _get_war_by_name(self, war_name):
+        return next((war for war in self.ww_queue if war.name.lower() == war_name.lower()), None)
+
     def check_existing_war(self, war_name):
-        for war in self.ww_queue:
-            if (war.name == war_name):
-                return True
-        return False
+        return self._get_war_by_name(war_name) != None
 
     def insert_into_war(self, war_name, user):
         logger.debug("insert %s into wordwar '%s'", user, war_name)
-        for awar in self.ww_queue:
-            logger.debug("checking wordwar '%s'", awar.name)
-            if (awar.name.lower() == war_name):
-                logger.info("Adding %s - %s", awar.name, user)
-                awar.add_user_to_wordwar(user)
-                return True
+        awar =  self._get_war_by_name(war_name)
+        if awar:
+            logger.info("Adding %s - %s", awar.name, user)
+            awar.add_user_to_wordwar(user)
+            return True
+
         logger.info("Could not find wordwar '%s'", war_name)
         return False
 
     def remove_from_war(self, war_name, user):
         logger.debug("remove %s from wordwar '%s'", user, war_name)
-        for awar in self.ww_queue:
-            logger.debug("checking wordwar '%s'", awar.name)
-            if (awar.name.lower() == war_name):
-                logger.info("removing %s - %s", awar.name, user)
-                return awar.remove_user_from_wordwar(user)
+        awar =  self._get_war_by_name(war_name)
+        if awar:
+            logger.info("removing %s - %s", awar.name, user)
+            return awar.remove_user_from_wordwar(user)
+
         logger.info("Could not find wordwar '%s'", war_name)
         return False
 
@@ -54,6 +54,7 @@ class WordWarManager(object):
 
     def done_word_war(self, wordwar):
         self.ww_queue.remove(wordwar)
+
 
     def get_status(self, user):
 #        if (self.check_for_daddy(user) == 1):
