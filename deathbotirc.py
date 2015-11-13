@@ -226,8 +226,11 @@ class WordWarBot(irc.IRCClient):
         war_name = commandlist[1]
         if self.wwMgr.remove_from_war(war_name, user):
             self.irc_send_msg(user, "You have been removed from WW: %s" % war_name)
+            if len(self.wwMgr.get_word_war_nicks(war_name)) == 0:
+                self.wwMgr.cancel_word_war(war_name)
         else:
             self.irc_send_msg(user, "You are not part of word war %s" % war_name)
+
 
     def parse_decide(self, msg, user):
         """ Chooses one random option """

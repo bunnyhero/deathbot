@@ -1,15 +1,17 @@
+import sys
+import string
+from datetime import *
+from threading import Timer
+from random import *
+import logging
 
 from twisted.words.protocols import irc
 from twisted.internet import protocol
-from random import *
-import sys
 from twisted.internet import reactor
-from datetime import *
-from threading import Timer
-import string
+from twisted.internet.error import AlreadyCalled, AlreadyCancelled
+
 import botutils
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -52,8 +54,23 @@ class WordWarManager(object):
         self.ww_queue.append(new_ww)
         return new_ww
 
+    def cancel_word_war(self, war_name):
+        logger.debug("cancel wordwar '%s'", war_name)
+        awar = self._get_war_by_name(war_name)
+        if awar:
+            awar.cancel_word_war()
+            return True
+        logger.info("Could not find wordwar '%s' to cancel", war_name)
+        return False
+
+
     def done_word_war(self, wordwar):
         self.ww_queue.remove(wordwar)
+
+
+    def get_word_war_nicks(self, war_name):
+        awar = self._get_war_by_name(war_name)
+        return awar.nicklist if awar else None
 
 
     def get_status(self, user):
@@ -143,6 +160,30 @@ class WordWar(object):
 
         self.wwqueue.done_word_war(self)
 
+    def cancel_word_war(self):
+        logger.info("cancel word war")
+        self._cancel_timer("war_start_timer")
+        self._cancel_timer("war_warning_timer")
+        self._cancel_timer("war_timer")
+        self.wwqueue.done_word_war(self)
+        self.send_message("WW: " + self.name + " has been cancelled")
+        self.notify_nicks()
+
+    def _cancel_timer(self, timer_name):
+        logger.debug("cancelling timer '%s'", timer_name)
+        if hasattr(self, timer_name):
+            t = getattr(self, timer_name)
+            logger.debug("found timer '%s'", timer_name)
+            try:
+                t.cancel()
+                logger.debug("cancelled")
+            except (AlreadyCalled, AlreadyCancelled) as e:
+                logger.debug("already called or cancelled")
+                pass # ignore
+        else:
+            logger.debug("no timer by that name")
+
+
     def add_user_to_wordwar(self, username):
         logger.debug("add_user_to_wordwar(): ww %s, user %s", self.name, username)
         self.nicklist.append(username)
@@ -177,7 +218,8 @@ class WordWar(object):
 
     def notify_nicks(self):
         short_nicks = ' '.join([nick.split('!')[0] for nick in self.nicklist])
-        self.wwqueue.irc_send_say("Hey! That means you: %s" % short_nicks)
+        if len(short_nicks):
+            self.wwqueue.irc_send_say("Hey! That means you: %s" % short_nicks)
 
     def send_message(self, message):
         self.wwqueue.irc_send_say(message)
