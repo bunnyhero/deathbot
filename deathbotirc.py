@@ -170,16 +170,15 @@ class WordWarBot(irc.IRCClient):
             elif command == "!decide":
                 self.parse_decide(msg, user)
 
-
-    def parse_startwar(self, command, user, verb_used):
-        logger.info(command)
+    def parse_startwar(self, msg, user, verb_used):
+        logger.info(msg)
         logger.info(user)
         short_user = user.split("!")[0]
         if self.wwMgr.check_existing_war(short_user):
             self.irc_send_msg(short_user, "Each user can only create one Word War at a time")
             return
 
-        commandlist = [c for c in command.split(" ") if c != '']
+        commandlist = [c for c in msg.split(" ") if c != '']
         if (len(commandlist) < 3):
             self.irc_send_msg(user, "Usage: %s %s " % (verb_used, command_help[verb_used][0]))
             return
