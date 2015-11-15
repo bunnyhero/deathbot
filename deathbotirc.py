@@ -120,6 +120,11 @@ class WordWarBot(irc.IRCClient):
         commandlist = msg.split(" ", 1)
         self.irc_send_say(commandlist[1])
 
+    def parse_do(self, msg, user):
+        commandlist = msg.split(" ", 1)
+        self.irc_send_describe(commandlist[1])
+
+
     def parse_changevictim(self, msg, user):
         if (self.check_for_daddy(user) == 1):
             commandlist = msg.split(" ")
@@ -140,8 +145,11 @@ class WordWarBot(irc.IRCClient):
             elif command == "!starwar":
                 self.parse_starwars(msg, user)
             elif command == "!echo":
-                if (father == 1):
+                if father == 1:
                     self.parse_echo(msg, user)
+            elif command == "!do":
+                if father == 1:
+                    self.parse_do(msg, user)
             elif command == "!status":
                 self.wwMgr.get_status(user)
             elif command == "!time":
@@ -267,6 +275,10 @@ class WordWarBot(irc.IRCClient):
     def irc_send_say(self, message):
         irc.IRCClient.say(self, self.channel, message)
         logger.info(self.channel + " -- say --> " + message)
+
+    def irc_send_describe(self, message):
+        irc.IRCClient.describe(self, self.channel, message)
+        logger.info(self.channel + " -- describe --> " + message)
 
     def irc_send_msg(self, user, message):
         irc.IRCClient.msg(self, user.split("!")[0], message)
